@@ -1,11 +1,15 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from transformers import pipeline
+from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 
 app = FastAPI(title="Text Generation API", description="AI 텍스트 생성 API")
 
 model_id = "openai/gpt-oss-20b"
+
+# 모델과 토크나이저를 전역으로 로드
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+model = AutoModelForCausalLM.from_pretrained(model_id)
 
 class TextRequest(BaseModel):
     prompt: str
@@ -15,20 +19,20 @@ class TextResponse(BaseModel):
 
 def generate_text(prompt: str):
     try:
-        pipe = pipeline(
-            "text-generation",
-            model=model_id,
-            torch_dtype="auto",
-            device_map="auto",
-        )
         messages = [
             {"role": "user", "content": prompt},
         ]
-        outputs = pipe(
+        inputs = tokenizer.apply_chat_template(
             messages,
-            max_new_tokens=256,
-        )
-        return outputs[0]["generated_text"]
+            add_generation_prompt=True,
+            tokenize=True,
+            return_dict=True,
+            return_tensors="pt",
+        ).to(model.device)
+
+        outputs = model.generate(**inputs, max_new_tokens=256)
+        generated_text = tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:])
+        return generated_text
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"텍스트 생성 중 오류가 발생했습니다: {str(e)}")
 
