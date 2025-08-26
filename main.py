@@ -19,3 +19,9 @@ def generate_text(text):
     )
     print(outputs[0]["generated_text"][-1])
     return outputs[0]["generated_text"]
+
+def main():
+    generate_text("Explain quantum mechanics clearly and concisely.")
+
+if __name__ == "__main__":
+    main()
