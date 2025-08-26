@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
+import json
 
 app = FastAPI(title="Text Generation API", description="AI 텍스트 생성 API")
 
@@ -36,7 +37,7 @@ def generate_text(prompt: str):
 
         outputs = model.generate(**inputs, max_new_tokens=256)
         decoded_outputs = tokenizer.decode(outputs)
-        print(decoded_outputs)
+        print(json.dumps(decoded_outputs, indent=4))
         generated_text = tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:])
         return generated_text
     except Exception as e:
