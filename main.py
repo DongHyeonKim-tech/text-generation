@@ -35,7 +35,7 @@ def generate_text(prompt: str):
         ).to(device)
 
         outputs = model.generate(**inputs, max_new_tokens=256)
-        decoded_outputs = tokenizer.decode(outputs[0])
+        decoded_outputs = tokenizer.decode(outputs)
         print(f'decoded_outputs: {decoded_outputs}')
         generated_text = tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:])
         return generated_text
