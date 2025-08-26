@@ -7,9 +7,13 @@ app = FastAPI(title="Text Generation API", description="AI 텍스트 생성 API"
 
 model_id = "openai/gpt-oss-20b"
 
+# MPS 사용 가능 여부 확인 및 device 설정
+device = "mps" if torch.backends.mps.is_available() else "cpu"
+print(f"Using device: {device}")
+
 # 모델과 토크나이저를 전역으로 로드
 tokenizer = AutoTokenizer.from_pretrained(model_id)
-model = AutoModelForCausalLM.from_pretrained(model_id)
+model = AutoModelForCausalLM.from_pretrained(model_id, device_map=device)
 
 class TextRequest(BaseModel):
     prompt: str
@@ -28,7 +32,7 @@ def generate_text(prompt: str):
             tokenize=True,
             return_dict=True,
             return_tensors="pt",
-        ).to(model.device)
+        ).to(device)
 
         outputs = model.generate(**inputs, max_new_tokens=256)
         generated_text = tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:])
