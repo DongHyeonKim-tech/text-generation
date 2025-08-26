@@ -1,3 +1,4 @@
 transformers
-kernels
 torch
+fastapi
+uvicorn
