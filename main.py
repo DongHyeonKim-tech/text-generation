@@ -69,7 +69,16 @@ def get_text_from_pipeline(prompt: str):
     prompt = f"{sys}\n\n질문: {prompt}\n답변:"
     
     gen = pipeline("text-generation", model=model, tokenizer=tok)
-    out = gen(prompt, max_new_tokens=256, temperature=0.7, top_p=0.9, return_full_text=False)
+    out = gen(
+        prompt,
+        max_new_tokens=256,
+        temperature=0.7,
+        top_p=0.95,
+        do_sample=True,
+        return_full_text=False,
+        eos_token_id=tok.eos_token_id,
+        pad_token_id=tok.eos_token_id,
+    )
     print(out[0]["generated_text"])
     generated_text = out[0]["generated_text"]
     return generated_text
