@@ -61,15 +61,13 @@ class TextResponse(BaseModel):
 #     except Exception as e:
 #         raise HTTPException(status_code=500, detail=f"텍스트 생성 중 오류가 발생했습니다: {str(e)}")
 
-    tok = AutoTokenizer.from_pretrained("openai/gpt-oss-20b")
-    model = AutoModelForCausalLM.from_pretrained("openai/gpt-oss-20b", torch_dtype="auto", device_map="auto")
+tok = AutoTokenizer.from_pretrained("openai/gpt-oss-20b")
+model = AutoModelForCausalLM.from_pretrained("openai/gpt-oss-20b", torch_dtype="auto", device_map="auto")
 
 def get_text_from_pipeline(prompt: str):
     sys = "당신은 항상 한국어로만 간결하고 정확하게 답변합니다."
     prompt = f"{sys}\n\n질문: {prompt}\n답변:"
     
-    
-
     gen = pipeline("text-generation", model=model, tokenizer=tok)
     out = gen(prompt, max_new_tokens=256, temperature=0.7, top_p=0.9, return_full_text=False)
     print(out[0]["generated_text"])
