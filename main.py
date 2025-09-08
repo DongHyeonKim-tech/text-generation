@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import torch
 import json
+import re
 
 app = FastAPI(title="Text Generation API", description="AI 텍스트 생성 API")
 
