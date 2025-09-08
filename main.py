@@ -88,7 +88,7 @@ def get_text_from_pipeline(prompt: str, length: str = "auto", force_korean: bool
         pad_token_id=tok.eos_token_id,
     )
     text = out[0]["generated_text"].strip()
-
+    print(f"text: {text}")
     # # 길이 보정: short는 너무 길면 2문장으로 컷, medium/long은 너무 짧으면 1회 재시도
     # if length == "short":
     #     if len(text) > preset["max_chars"]:
@@ -121,9 +121,10 @@ def get_text_from_pipeline(prompt: str, length: str = "auto", force_korean: bool
     #             pad_token_id=tok.eos_token_id,
     #         )
     #         text = out2[0]["generated_text"].strip()
-
+    
     # 한국어 강제: 한글 비율이 낮으면 1회 재작성
     if force_korean and _korean_ratio(text) < 0.5:
+        print("=========================================한글 비율 낮아서 재생성=========================================")
         fix_prompt = (
             f"{sys}\n{lang_rule}\n\n"
             f"다음 내용을 자연스러운 한국어로만 다시 작성하세요. 불필요한 영어 표기는 제거하고 맥락을 유지하세요.\n\n"
@@ -147,6 +148,7 @@ def get_text_from_pipeline(prompt: str, length: str = "auto", force_korean: bool
             pad_token_id=tok.eos_token_id,
         )
         text = out3[0]["generated_text"].strip()
+        print(f"재생성 결과: {text}")
 
     return text
 # @app.post("/generate", response_model=TextResponse)
