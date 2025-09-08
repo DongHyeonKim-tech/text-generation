@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import torch
 import json
 
@@ -61,9 +61,25 @@ def generate_text(prompt: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"텍스트 생성 중 오류가 발생했습니다: {str(e)}")
 
+def get_text_from_pipeline(prompt: str):
+    tok = AutoTokenizer.from_pretrained("openai/gpt-oss-20b")
+    model = AutoModelForCausalLM.from_pretrained("openai/gpt-oss-20b", torch_dtype="auto", device_map="auto")
+
+    gen = pipeline("text-generation", model=model, tokenizer=tok)
+    out = gen("당신은 항상 한국어로 답하세요.\n\n질문: 한국의 수도는?\n답변:",
+            max_new_tokens=256, temperature=0.7, top_p=0.9, return_full_text=False)
+    print(out[0]["generated_text"])
+    generated_text = out[0]["generated_text"]
+    return generated_text
+
 @app.post("/generate", response_model=TextResponse)
 async def generate_text_endpoint(request: TextRequest):
     generated_text = generate_text(request.prompt)
+    return TextResponse(generated_text=generated_text)
+
+@app.get("/generate_pipeline", response_model=TextResponse)
+async def generate_text_endpoint(request: TextRequest):
+    generated_text = get_text_from_pipeline(request.prompt)
     return TextResponse(generated_text=generated_text)
 
 @app.get("/")
