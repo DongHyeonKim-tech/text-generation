@@ -39,6 +39,16 @@ def generate_text(prompt: str):
         decoded_outputs = tokenizer.decode(outputs[0])
         print(decoded_outputs)
         generated_text = tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:])
+        skip_special_tokens_response = tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:], skip_special_tokens=True)
+        print(f"skip_special_tokens_response: {skip_special_tokens_response}")
+        generated_text2 = tokenizer.decode(outputs[1][inputs["input_ids"].shape[-1]:])
+        print(f"generated_text2: {generated_text2}")
+        generated_text3 = tokenizer.decode(outputs[2][inputs["input_ids"].shape[-1]:])
+        print(f"generated_text3: {generated_text3}")
+        generated_text4 = tokenizer.decode(outputs[3][inputs["input_ids"].shape[-1]:])
+        print(f"generated_text4: {generated_text4}")
+        generated_text5 = tokenizer.decode(outputs[4][inputs["input_ids"].shape[-1]:])
+        print(f"generated_text5: {generated_text5}")
         return generated_text
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"텍스트 생성 중 오류가 발생했습니다: {str(e)}")
