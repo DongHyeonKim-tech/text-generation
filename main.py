@@ -20,11 +20,11 @@ app = FastAPI(title="Text Generation API", description="AI 텍스트 생성 API"
 #     device_map="auto"
 # )
 
-# class TextRequest(BaseModel):
-#     prompt: str
+class TextRequest(BaseModel):
+    prompt: str
 
-# class TextResponse(BaseModel):
-#     generated_text: str
+class TextResponse(BaseModel):
+    generated_text: str
 
 # def generate_text(prompt: str):
 #     try:
