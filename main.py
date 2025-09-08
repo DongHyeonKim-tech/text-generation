@@ -66,16 +66,19 @@ model = AutoModelForCausalLM.from_pretrained("openai/gpt-oss-20b", torch_dtype="
 
 def get_text_from_pipeline(prompt: str):
     sys = "당신은 항상 한국어로만 간결하고 정확하게 답변합니다."
-    prompt = f"{sys}\n\n질문: {prompt}\n답변:"
+    pipeline_prompt = f"{sys}\n\n질문: {prompt}\n답변:"
+    print(f"pipeline_prompt: {pipeline_prompt}")
     
     gen = pipeline("text-generation", model=model, tokenizer=tok)
     out = gen(
-        prompt,
+        pipeline_prompt,
         max_new_tokens=256,
         temperature=0.7,
         top_p=0.95,
         do_sample=True,
         return_full_text=False,
+        return_dict_in_generate=True,
+        output_scores=True,
         eos_token_id=tok.eos_token_id,
         pad_token_id=tok.eos_token_id,
     )
