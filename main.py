@@ -50,7 +50,6 @@ def generate_text(prompt: str):
             repetition_penalty=1.05,       # 반복 줄이기(선택)
             return_dict_in_generate=True,
             output_scores=True,
-            return_full_text=False
         )
 
         # 프롬프트를 제외한 "완성 부분"만 디코드
