@@ -75,8 +75,8 @@ def get_text_from_pipeline(prompt: str, length: str = "auto", force_korean: bool
     # 1차 생성
     out = gen(
         base_prompt,
-        max_new_tokens=preset["max_new"],
-        min_new_tokens=preset["min_new"],
+        # max_new_tokens=preset["max_new"],
+        # min_new_tokens=preset["min_new"],
         temperature=0.7,
         top_p=0.95,
         do_sample=True,
@@ -88,6 +88,7 @@ def get_text_from_pipeline(prompt: str, length: str = "auto", force_korean: bool
     )
     text = out[0]["generated_text"].strip()
     print(f"text: {text}")
+    print(f"answer: {text.split('answer:')[1].strip()}")
     # # 길이 보정: short는 너무 길면 2문장으로 컷, medium/long은 너무 짧으면 1회 재시도
     # if length == "short":
     #     if len(text) > preset["max_chars"]:
@@ -125,7 +126,7 @@ def get_text_from_pipeline(prompt: str, length: str = "auto", force_korean: bool
     if force_korean and _korean_ratio(text) < 0.5:
         print("=========================================한글 비율 낮아서 재생성=========================================")
         fix_prompt = (
-            f"{sys}\n{lang_rule}\n\n"
+            f"{sys}\n\n"
             f"다음 내용을 자연스러운 한국어로만 다시 작성하세요. 불필요한 영어 표기는 제거하고 맥락을 유지하세요.\n\n"
             f"내용:\n{text}\n\n"
             f"한국어 답변:"
