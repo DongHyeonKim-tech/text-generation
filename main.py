@@ -66,10 +66,9 @@ def get_text_from_pipeline(prompt: str, length: str = "auto", force_korean: bool
         length = _detect_length(prompt)
     preset = LENGTH_PRESETS[length]
 
-    sys = "당신은 항상 한국어로만, 사용자가 이해하기 쉽게 답변합니다."
-    lang_rule = "반드시 100% 한국어로만 답변하세요. 영어 용어가 필요하면 괄호 없이 자연스러운 한국어로 풀이하세요."
+    sys = "Always answer in Korean."
 
-    base_prompt = f"{sys}\n{lang_rule}\n\n질문: {prompt}\n답변:"
+    base_prompt = f"{sys}\nquestion: {prompt}\nanswer:"
     if verbose:
         print("[pipeline_prompt]", base_prompt)
 
