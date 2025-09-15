@@ -4,6 +4,8 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 import torch
 import json
 import re
+import os
+from openai import OpenAI
 
 app = FastAPI(title="Text Generation API", description="AI 텍스트 생성 API")
 
@@ -159,6 +161,23 @@ def get_text_from_pipeline(prompt: str, length: str = "auto", force_korean: bool
 @app.post("/generate_pipeline", response_model=TextResponse)
 async def generate_text_endpoint(request: TextRequest):
     generated_text = get_text_from_pipeline(request.prompt)
+    return TextResponse(generated_text=generated_text)
+
+@app.post("/generate-with-runpod", response_model=TextResponse)
+async def generate_text_with_runpod(request: TextRequest):
+    client = OpenAI(
+    api_key=os.environ.get("RUNPOD_KEY"),
+    base_url="https://api.runpod.ai/v2/kvu3npoylfiknt/openai/v1",
+    )
+    
+    response = client.chat.completions.create(
+        model="openai/gpt-oss-20b",
+        messages=[{"role": "user", "content": request.prompt}],
+        temperature=0,
+        max_tokens=100,
+    )
+
+    generated_text = response.choices[0].message.content
     return TextResponse(generated_text=generated_text)
 
 @app.get("/")
