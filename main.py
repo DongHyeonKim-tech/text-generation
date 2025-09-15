@@ -6,6 +6,10 @@ import json
 import re
 import os
 from openai import OpenAI
+from dotenv import load_dotenv
+
+# .env 파일 로드
+load_dotenv()
 
 app = FastAPI(title="Text Generation API", description="AI 텍스트 생성 API")
 

@@ -4,3 +4,4 @@ fastapi
 uvicorn
 accelerate
 openai
+python-dotenv
