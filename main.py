@@ -165,9 +165,13 @@ async def generate_text_endpoint(request: TextRequest):
 
 @app.post("/generate-with-runpod", response_model=TextResponse)
 async def generate_text_with_runpod(request: TextRequest):
+    # 환경 변수에서 API 키 가져오기, 없으면 기본값 사용
+    api_key = os.environ.get("RUNPOD_KEY", "your_runpod_api_key_here")
+    
+    print(f"api_key: {api_key}")
     client = OpenAI(
-    api_key=os.environ.get("RUNPOD_KEY"),
-    base_url="https://api.runpod.ai/v2/kvu3npoylfiknt/openai/v1",
+        api_key=api_key,
+        base_url="https://api.runpod.ai/v2/kvu3npoylfiknt/openai/v1",
     )
     
     response = client.chat.completions.create(
